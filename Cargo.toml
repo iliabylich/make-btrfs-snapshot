@@ -1,0 +1,9 @@
+[package]
+name = "make-btrfs-snapshot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4"
+miette = { version = "7.5", features = ["fancy"] }
+owo-colors = "4.1"
