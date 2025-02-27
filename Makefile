@@ -3,7 +3,7 @@ build:
 
 install:
 	@install -Dm644 -t "$(DESTDIR)/etc/apt/apt.conf.d/" 80-make-btrfs-snapshot-and-update-grub
-	@install -Dm644 -t "$(DESTDIR)/etc/grub.d/" 41_snapshots-btrfs
+	@install -Dm755 -t "$(DESTDIR)/etc/grub.d/" 41_snapshots-btrfs
 	@install -Dm755 -t "$(DESTDIR)/usr/bin/" target/release/make-btrfs-snapshot
 
 sync-grub-btrfs:
