@@ -1,0 +1,16 @@
+menuentry '{{snapshot_timestamp}} - {{kernel_version_arch}}' --class snapshots --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-snapshots-{{boot_uuid}}' {
+    if [ x$feature_all_video_module = xy ]; then
+        insmod all_video
+    fi
+    set gfxpayload=keep
+    insmod btrfs
+    search --no-floppy --fs-uuid  --set=root {{boot_uuid}}
+
+    echo 'Loading Snapshot: @/{{snapshot_path}}'
+
+    echo 'Loading Kernel: {{kernel_path}} ...'
+    linux "/@/{{snapshot_path}}{{kernel_path}}" root=UUID={{root_uuid}} quiet rootflags={{mount_options}},subvol="@/{{snapshot_path}}"
+
+    echo 'Loading Initramfs: {{initramfs_path}} ...'
+    initrd "/@/{{snapshot_path}}{{initramfs_path}}"
+}

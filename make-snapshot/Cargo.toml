@@ -1,0 +1,10 @@
+[package]
+name = "make-snapshot"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+miette = { workspace = true }
+anstyle = { workspace = true }
+chrono = { workspace = true }
+utils = { path = "../utils" }
