@@ -6,4 +6,4 @@ members = ["make-snapshot", "generate-grub", "utils"]
 chrono = "0.4"
 miette = { version = "7.5", features = ["fancy"] }
 anstyle = "1.0"
-upon = "0.9"
+upon = "0.10"
