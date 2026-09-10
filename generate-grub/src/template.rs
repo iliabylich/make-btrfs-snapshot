@@ -1,4 +1,4 @@
-use miette::{Context as _, IntoDiagnostic as _, Result};
+use anyhow::{Context, Result};
 use utils::Snapshot;
 
 use crate::{Device, Kernel};
@@ -13,7 +13,6 @@ impl Template {
 
         engine
             .add_template("grub", include_str!("./template"))
-            .into_diagnostic()
             .context("failed to add template")?;
 
         Ok(Self { engine })
@@ -40,7 +39,6 @@ impl Template {
                 snapshot_timestamp: &snapshot.timestamp,
             })
             .to_string()
-            .into_diagnostic()
             .context("failed to render grub template")
     }
 }

@@ -1,5 +1,5 @@
 use crate::boot;
-use miette::Result;
+use anyhow::Result;
 use utils::{NC, YELLOW};
 
 #[derive(Debug)]

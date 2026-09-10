@@ -1,7 +1,8 @@
-use miette::{Context as _, IntoDiagnostic, Report, Result, bail};
+use anyhow::{Context, Result, bail};
 use std::{
-    io::{BufRead as _, BufReader},
+    io::{BufRead, BufReader},
     process::Stdio,
+    thread::JoinHandle,
 };
 
 pub const NC: anstyle::Reset = anstyle::Reset;
@@ -56,7 +57,6 @@ pub fn exec(exe: impl AsRef<str>, args: impl IntoIterator<Item = String>) -> Res
 
     let mut child = command
         .spawn()
-        .into_diagnostic()
         .with_context(|| format!("failed to spawn {exe} {args:?}"))?;
 
     let child_stdout = child
@@ -74,30 +74,23 @@ pub fn exec(exe: impl AsRef<str>, args: impl IntoIterator<Item = String>) -> Res
         let mut recorded = vec![];
 
         for line in stdout_lines {
-            let line = line
-                .into_diagnostic()
-                .context("failed to read a line from stdout")?;
+            let line = line.context("failed to read a line from stdout")?;
             eprintln!("{line}");
             recorded.push(line);
         }
         Ok(recorded)
     });
 
-    let stderr_thread = std::thread::spawn(move || {
+    let stderr_thread: JoinHandle<Result<()>> = std::thread::spawn(move || {
         let stderr_lines = BufReader::new(child_stderr).lines();
         for line in stderr_lines {
-            let line = line
-                .into_diagnostic()
-                .context("failed to read a line from stderr")?;
+            let line = line.context("failed to read a line from stderr")?;
             eprintln!("{line}");
         }
-        Result::<_, Report>::Ok(())
+        Ok(())
     });
 
-    let status = child
-        .wait()
-        .into_diagnostic()
-        .context("failed to wait on child")?;
+    let status = child.wait().context("failed to wait on child")?;
 
     if !status.success() {
         bail!(

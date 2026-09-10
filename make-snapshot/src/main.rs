@@ -1,4 +1,4 @@
-use miette::Result;
+use anyhow::Result;
 use utils::{GREEN, NC, RED, Snapshot, YELLOW, exec0, exec3, exec4};
 
 const KEEP_ONLY_SNAPSHOTS: usize = 5;

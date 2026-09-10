@@ -4,10 +4,10 @@ mod fstab;
 mod kernel;
 mod template;
 
+use anyhow::Result;
 use device::Device;
 use fstab::Fstab;
 use kernel::Kernel;
-use miette::Result;
 use template::Template;
 use utils::{CYAN, GREEN, NC, RED, Snapshot, YELLOW};
 
