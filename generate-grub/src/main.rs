@@ -16,11 +16,11 @@ fn main() -> Result<()> {
 
     eprintln!("{YELLOW}Detected kernels:{NC}");
     if kernels.is_empty() {
-        eprintln!("{RED}None, aborting.{NC}")
-    } else {
-        for kernel in kernels.iter() {
-            eprintln!("   {CYAN}+{NC} {GREEN}{kernel}{NC}")
-        }
+        eprintln!("{RED}None, aborting.{NC}");
+        std::process::exit(1);
+    }
+    for kernel in kernels.iter() {
+        eprintln!("   {CYAN}+{NC} {GREEN}{kernel}{NC}")
     }
 
     let root = Device::new("/")?;
@@ -37,11 +37,9 @@ fn main() -> Result<()> {
         eprintln!("    {CYAN}+{NC} {GREEN}{}{NC}", snapshot.path);
     }
 
-    let template = Template::new()?;
-
     for snapshot in snapshots.iter() {
         for kernel in kernels.iter() {
-            let grub = template.render(&root, &root_mount_options, &boot, kernel, snapshot)?;
+            let grub = Template::render(&root, &root_mount_options, &boot, kernel, snapshot)?;
             println!("{grub}");
         }
     }

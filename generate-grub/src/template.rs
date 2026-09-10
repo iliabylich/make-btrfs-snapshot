@@ -1,44 +1,32 @@
-use anyhow::{Context, Result};
+use crate::{Device, Kernel};
+use anyhow::{Result, ensure};
 use utils::Snapshot;
 
-use crate::{Device, Kernel};
+const TEMPLATE: &str = include_str!("template");
 
-pub(crate) struct Template {
-    engine: upon::Engine<'static>,
-}
+pub(crate) struct Template;
 
 impl Template {
-    pub(crate) fn new() -> Result<Self> {
-        let mut engine = upon::Engine::new();
-
-        engine
-            .add_template("grub", include_str!("./template"))
-            .context("failed to add template")?;
-
-        Ok(Self { engine })
-    }
-
     pub(crate) fn render(
-        &self,
         root: &Device,
         root_mount_options: &str,
         boot: &Device,
         kernel: &Kernel,
         snapshot: &Snapshot,
     ) -> Result<String> {
-        self.engine
-            .template("grub")
-            .render(upon::value! {
-                boot_uuid: &boot.uuid,
-                initramfs_path: &kernel.initramfs,
-                kernel_path: &kernel.filepath,
-                kernel_version_arch: &kernel.version_arch,
-                mount_options: &root_mount_options,
-                root_uuid: &root.uuid,
-                snapshot_path: &snapshot.path,
-                snapshot_timestamp: &snapshot.timestamp,
-            })
-            .to_string()
-            .context("failed to render grub template")
+        let template = TEMPLATE
+            .replace("{{boot_uuid}}", &boot.uuid)
+            .replace("{{initramfs_path}}", &kernel.initramfs)
+            .replace("{{kernel_path}}", &kernel.filepath)
+            .replace("{{kernel_version_arch}}", &kernel.version_arch)
+            .replace("{{mount_options}}", &root_mount_options)
+            .replace("{{root_uuid}}", &root.uuid)
+            .replace("{{snapshot_path}}", &snapshot.path)
+            .replace("{{snapshot_timestamp}}", &snapshot.timestamp);
+
+        ensure!(!template.contains("{{"));
+        ensure!(!template.contains("}}"));
+
+        Ok(template)
     }
 }
