@@ -24,7 +24,7 @@ fn main() -> Result<()> {
     }
 
     let root = Device::new("/")?;
-    let root_mount_options = Fstab::options_for_uuid(&root.uuid)?;
+    let root_mount_options = Fstab::mount_options_for_uuid(&root.uuid)?;
     eprintln!("{YELLOW}Root: {root}{NC}");
     eprintln!("{YELLOW}Mount options: {root_mount_options}{NC}");
 
@@ -32,7 +32,7 @@ fn main() -> Result<()> {
     eprintln!("{YELLOW}Boot: {boot}{NC}");
 
     let snapshots = Snapshot::all()?;
-    eprintln!("{GREEN}Existing snapshots (newest to oldest):{NC}");
+    eprintln!("{GREEN}Existing snapshots:{NC}");
     for snapshot in snapshots.iter() {
         eprintln!("    {CYAN}+{NC} {GREEN}{}{NC}", snapshot.path);
     }

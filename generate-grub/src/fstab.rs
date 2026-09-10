@@ -1,27 +1,29 @@
-use anyhow::{Context, Result, bail};
+use anyhow::{Context, Result};
 
 pub(crate) struct Fstab;
 
 impl Fstab {
-    pub(crate) fn options_for_uuid(uuid: &str) -> Result<String> {
+    pub(crate) fn mount_options_for_uuid(uuid: &str) -> Result<String> {
         let fstab = std::fs::read_to_string("/etc/fstab").context("failed to read /etc/fstab")?;
 
-        for line in fstab.lines() {
-            if line.contains(uuid) {
-                for part in line.split_whitespace() {
-                    if part.contains("subvol") {
-                        let options = part
-                            .split(',')
-                            .filter(|opt| !opt.contains("subvol"))
-                            .collect::<Vec<_>>()
-                            .join(",");
-                        return Ok(options);
-                    }
-                }
-                bail!("device {uuid} is registered in /etc/fstab, but it has no mount options")
-            }
-        }
+        let line = fstab
+            .lines()
+            .find(|line| line.contains(uuid))
+            .with_context(|| format!("failed to find device {uuid} in /etc/fstab"))?;
 
-        bail!("failed to find device {uuid} in /etc/fstab")
+        let options = line
+            .split_whitespace()
+            .find(|part| part.contains("subvol"))
+            .with_context(|| {
+                format!("device {uuid} is registered in /etc/fstab, but it has no mount options")
+            })?;
+
+        let clean = options
+            .split(',')
+            .filter(|opt| !opt.contains("subvol"))
+            .collect::<Vec<_>>()
+            .join(",");
+
+        Ok(clean)
     }
 }

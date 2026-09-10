@@ -27,14 +27,14 @@ fn main() -> Result<()> {
     paths.reverse();
 
     eprintln!("{GREEN}Existing snapshots (newest to oldest):{NC}");
-    for (n, path) in paths.iter().enumerate() {
-        let n = n + 1;
-        let marker = if n > KEEP_ONLY_SNAPSHOTS {
-            format!("{RED}<- to be removed{NC}")
+    for (path, n) in paths.iter().zip(1..) {
+        eprint!("    {YELLOW}{n:>3}. {path}{NC}");
+
+        if n > KEEP_ONLY_SNAPSHOTS {
+            eprintln!(" {RED}<- to be removed{NC}")
         } else {
-            String::new()
-        };
-        eprintln!("    {YELLOW}{n:>3}. {path}{NC} {marker}");
+            eprintln!()
+        }
     }
     eprintln!("{GREEN}Keeping only {KEEP_ONLY_SNAPSHOTS} latest snapshots{NC}");
 

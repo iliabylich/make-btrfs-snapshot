@@ -1,4 +1,4 @@
-use anyhow::{Result, bail};
+use anyhow::{Context, Result, ensure};
 use utils::{exec3, exec4};
 
 #[derive(Debug)]
@@ -12,17 +12,17 @@ impl Device {
     pub(crate) fn new(path: impl Into<String>) -> Result<Self> {
         let path = path.into();
 
-        let device = exec3("grub-probe", "--target", "device", "/")?;
-        if device.len() != 1 {
-            bail!("unexpected output of grub-probe: {device:?}")
-        }
-        let device = device.into_iter().next().unwrap();
+        let device = sole(exec3("grub-probe", "--target", "device", "/")?)
+            .context("expected exactly on item in output of grub-probe")?;
 
-        let uuid = exec4("grub-probe", "--device", &device, "--target", "fs_uuid")?;
-        if uuid.len() != 1 {
-            bail!("unexpected output of grub-probe: {uuid:?}")
-        }
-        let uuid = uuid.into_iter().next().unwrap();
+        let uuid = sole(exec4(
+            "grub-probe",
+            "--device",
+            &device,
+            "--target",
+            "fs_uuid",
+        )?)
+        .context("expected exactly on item in output of grub-probe")?;
 
         Ok(Self { path, device, uuid })
     }
@@ -36,4 +36,11 @@ impl std::fmt::Display for Device {
             self.path, self.device, self.uuid
         )
     }
+}
+
+fn sole<T>(v: Vec<T>) -> Result<T> {
+    let mut iter = v.into_iter();
+    let item = iter.next().context("empty list")?;
+    ensure!(iter.next().is_none(), "list has more than 1 item");
+    Ok(item)
 }

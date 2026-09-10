@@ -12,13 +12,11 @@ pub(crate) struct Kernel {
 impl Kernel {
     pub(crate) fn list() -> Result<Vec<Self>> {
         let filelist = boot::ls()?;
-        let mut out = vec![];
-        for filename in filelist {
-            if let Some(kernel) = Self::new(filename) {
-                out.push(kernel);
-            }
-        }
-        Ok(out)
+        let kernels = filelist
+            .into_iter()
+            .flat_map(|filename| Self::new(filename))
+            .collect();
+        Ok(kernels)
     }
 
     fn new(filename: String) -> Option<Self> {
