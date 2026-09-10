@@ -1,5 +1,5 @@
 use anyhow::Result;
-use utils::{GREEN, NC, RED, Snapshot, YELLOW, exec0, exec3, exec4};
+use make_btrfs_snapshot::{GREEN, NC, RED, Snapshot, YELLOW, exec0, exec3, exec4};
 
 const KEEP_ONLY_SNAPSHOTS: usize = 5;
 

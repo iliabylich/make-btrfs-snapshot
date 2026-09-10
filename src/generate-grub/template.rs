@@ -1,6 +1,6 @@
 use crate::{Device, Kernel};
 use anyhow::{Result, ensure};
-use utils::Snapshot;
+use make_btrfs_snapshot::Snapshot;
 
 const TEMPLATE: &str = include_str!("template");
 

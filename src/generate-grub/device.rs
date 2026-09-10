@@ -1,5 +1,5 @@
 use anyhow::{Context, Result, ensure};
-use utils::{exec3, exec4};
+use make_btrfs_snapshot::{exec3, exec4};
 
 #[derive(Debug)]
 pub(crate) struct Device {

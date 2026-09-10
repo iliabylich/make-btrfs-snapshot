@@ -1,6 +1,6 @@
 use crate::boot;
 use anyhow::Result;
-use utils::{NC, YELLOW};
+use make_btrfs_snapshot::{NC, YELLOW};
 
 #[derive(Debug)]
 pub(crate) struct Kernel {

@@ -1,44 +1,10 @@
+use crate::{CYAN, GREEN, NC, YELLOW};
 use anyhow::{Context, Result, bail};
 use std::{
     io::{BufRead, BufReader},
     process::Stdio,
     thread::JoinHandle,
 };
-
-pub const NC: anstyle::Reset = anstyle::Reset;
-pub const GREEN: anstyle::Style = anstyle::Style::new()
-    .bold()
-    .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Green)));
-pub const YELLOW: anstyle::Style = anstyle::Style::new()
-    .bold()
-    .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Yellow)));
-pub const RED: anstyle::Style = anstyle::Style::new()
-    .bold()
-    .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Red)));
-pub const CYAN: anstyle::Style = anstyle::Style::new()
-    .bold()
-    .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Cyan)));
-
-pub struct Snapshot {
-    pub timestamp: String,
-    pub path: String,
-}
-
-impl Snapshot {
-    pub fn all() -> Result<Vec<Snapshot>> {
-        let lines = exec3("btrfs", "subvolume", "list", "/")?;
-        let mut out = vec![];
-        for line in lines {
-            if let Some((_, timestamp)) = line.split_once(".snapshots/") {
-                out.push(Snapshot {
-                    timestamp: timestamp.to_string(),
-                    path: format!(".snapshots/{timestamp}"),
-                })
-            }
-        }
-        Ok(out)
-    }
-}
 
 pub fn exec(exe: impl AsRef<str>, args: impl IntoIterator<Item = String>) -> Result<Vec<String>> {
     let exe = exe.as_ref();
@@ -142,24 +108,4 @@ pub fn exec4(
     arg4: impl Into<String>,
 ) -> Result<Vec<String>> {
     exec(exe, [arg1.into(), arg2.into(), arg3.into(), arg4.into()])
-}
-
-pub fn exec5(
-    exe: impl AsRef<str>,
-    arg1: impl Into<String>,
-    arg2: impl Into<String>,
-    arg3: impl Into<String>,
-    arg4: impl Into<String>,
-    arg5: impl Into<String>,
-) -> Result<Vec<String>> {
-    exec(
-        exe,
-        [
-            arg1.into(),
-            arg2.into(),
-            arg3.into(),
-            arg4.into(),
-            arg5.into(),
-        ],
-    )
 }

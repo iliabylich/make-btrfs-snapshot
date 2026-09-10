@@ -4,12 +4,9 @@ mod fstab;
 mod kernel;
 mod template;
 
+use crate::{device::Device, fstab::Fstab, kernel::Kernel, template::Template};
 use anyhow::Result;
-use device::Device;
-use fstab::Fstab;
-use kernel::Kernel;
-use template::Template;
-use utils::{CYAN, GREEN, NC, RED, Snapshot, YELLOW};
+use make_btrfs_snapshot::{CYAN, GREEN, NC, RED, Snapshot, YELLOW};
 
 fn main() -> Result<()> {
     let kernels = Kernel::list()?;

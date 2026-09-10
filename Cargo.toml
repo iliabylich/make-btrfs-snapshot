@@ -1,8 +1,17 @@
-[workspace]
-resolver = "2"
-members = ["make-snapshot", "generate-grub", "utils"]
+[package]
+name = "make-btrfs-snapshot"
+version = "0.1.0"
+edition = "2024"
 
-[workspace.dependencies]
+[dependencies]
 chrono = "0.4"
 anstyle = "1.0"
 anyhow = "1.0"
+
+[[bin]]
+name = "generate-grub"
+path = "src/generate-grub/main.rs"
+
+[[bin]]
+name = "make-btrfs-snapshot"
+path = "src/make-btrfs-snapshot/main.rs"
